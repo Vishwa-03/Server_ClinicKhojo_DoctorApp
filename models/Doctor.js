@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const path = require("path"); // For file path validation
+const Schema = mongoose.Schema;
 
-const doctorSchema = new mongoose.Schema({
+const doctorSchema = new Schema({
   // Basic user information (inherited from User model)
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
@@ -11,17 +11,13 @@ const doctorSchema = new mongoose.Schema({
   // Doctor profile details
   profileImage: {
     type: String, // Store image path relative to upload directory
-    // get: function (path) {
-    //   // Construct full image URL based on upload directory configuration
-    //   // return process.env.IMAGE_UPLOAD_URL + path;
-    // },
   },
   title: { type: String, required: true, enum: ["Dr.", "Mr.", "Ms.", "Mrs."] },
   fullName: { type: String, required: true },
   contactNumber: { type: String, required: true },
   gender: { type: String, required: true, enum: ["Male", "Female", "Other"] },
   dateOfBirth: { type: Date, required: true },
-  yearsOfExperience: { type: Number, required: true, min: 0 },
+  yearsOfExperience: { type: Number, required: true, min: 1 },
   specialization: { type: String, required: true },
   address: { type: String, required: true },
   bio: { type: String },
@@ -36,11 +32,6 @@ const doctorSchema = new mongoose.Schema({
       endDate: { type: Date, required: true },
       certificates: {
         type: [{ type: String }], // Array of certificate paths (relative)
-        // get: function (paths) {
-        //   // Construct full certificate URLs
-        //   if (!paths) return [];
-        //   return paths.map((path) => process.env.CERTIFICATE_UPLOAD_URL + path);
-        // },
       },
     },
   ],
@@ -50,10 +41,6 @@ const doctorSchema = new mongoose.Schema({
   yearOfRegistration: { type: Number, required: true },
   registrationAuthority: { type: String, required: true },
   registrationProof: { type: String }, // Store certificate path (relative)
-  // get: function (path) {
-  //   // Construct full registration proof URL
-  //   return process.env.CERTIFICATE_UPLOAD_URL + path;
-  // },
 
   // Identify proof
   identityType: {
@@ -63,10 +50,6 @@ const doctorSchema = new mongoose.Schema({
   },
   uniqueIdNumber: { type: String, required: true },
   identityProof: { type: String }, // Store proof path (relative)
-  // get: function (path) {
-  //   // Construct full identity proof URL
-  //   return process.env.CERTIFICATE_UPLOAD_URL + path;
-  // },
 
   // Clinic profile (optional, linked if doctor)
   clinic: {
@@ -76,7 +59,6 @@ const doctorSchema = new mongoose.Schema({
 
   // Doctor availability and scheduling (new section)
   availableSlots: {
-    // Array of objects defining available slots
     type: [
       {
         day: {
@@ -94,7 +76,6 @@ const doctorSchema = new mongoose.Schema({
         },
         slots: [
           {
-            // Array of time slots for each day
             startTime: { type: Date, required: true }, // Use Date object with time
             endTime: { type: Date, required: true }, // Use Date object with time
             patientsPerSlot: { type: Number, required: true, min: 1 }, // Maximum patients allowed per slot
@@ -109,7 +90,6 @@ const doctorSchema = new mongoose.Schema({
   emergencyBeds: { type: Number, required: true, min: 0 }, // Number of emergency beds available
   leaveRequests: [
     {
-      // Array of leave requests (optional)
       startDate: { type: Date, required: true },
       endDate: { type: Date, required: true },
       reason: { type: String, required: true },
