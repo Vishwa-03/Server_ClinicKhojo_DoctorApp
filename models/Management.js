@@ -59,7 +59,7 @@ const ManagementSchema = new Schema({
 //     hospital.hospitals.push(this._id); // Add management profile ID to hospital's hospitals array
 //     await hospital.save(); // Save the updated hospital document
 //   }
-//   // next();
+//   next();
 // });
 // Hash password before saving
 ManagementSchema.pre('save', async function (next) {

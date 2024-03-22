@@ -87,18 +87,21 @@ const HospitalSchema = new Schema({
       type: String, // Path to the uploaded registration certificate
     },
   },
-  createdByEmail: {
+  managementEmail: {
     type: String,
-    require:true,
+    require: true,
+    index: true,
+    unique: true,
+    sparse: true,
   },
   doctorsId: [
     {
-      type:String,
+      type: String,
     },
   ],
   doctorsName: [
     {
-      type:String,
+      type: String,
     },
   ],
 });

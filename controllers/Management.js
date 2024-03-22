@@ -124,7 +124,7 @@ exports.createHospitals = async (req, res) => {
       photos,
       yearOfEstablishment,
       registration,
-      createdByEmail,
+      managementEmail,
       ...otherdetails
     } = req.body;
 
@@ -136,11 +136,15 @@ exports.createHospitals = async (req, res) => {
       !timings ||
       !specializations ||
       !yearOfEstablishment ||
-      !registration
+      !registration||
+      !managementEmail
     ) {
       return res.status(400).json({ message: "Missing required fields" });
     }
-
+    const existingManagement = await Management.findOne({ managementEmail });
+    if (existingManagement) {
+      return res.status(409).json({ message: "Email address already exists" });
+    }
     // 4. Create new Hospital document
     const newHospital = new Hospital({
       name,
@@ -164,27 +168,26 @@ exports.createHospitals = async (req, res) => {
         yearOfRegistration: registration.yearOfRegistration,
         certificatePath: registration.certificatePath, // (implement logic to store uploaded certificate path)
       },
-      createdByEmail, // Reference the currently logged-in management profile
+      managementEmail, // Reference the currently logged-in management profile
       ...otherdetails,
     });
-
     // 5. Save the new hospital
     await newHospital.save();
     // Associate hopsital with clinic
     const management = await Management.findOneAndUpdate(
-      { email: createdByEmail }, // Find by createdByEmail
-      { $push: { hospitals: newHospital._id } },
+      { email: managementEmail }, // Find by createdByEmail
+      { $push: { hospitals: newHospital._id ,hospitalNames: newHospital.name} },
 
       { new: true } // Push hospital ID to hospitals array
     );
-    const management2 = await Management.findOneAndUpdate(
-      { email: createdByEmail }, // Find by createdByEmail
-      //   // { "$push": { hospitals: newHospital._id , } },
-      { $push: { hospitalNames: newHospital.name } },
-      { new: true } // Push hospital ID to hospitals array
-    );
+    // const management2 = await Management.findOneAndUpdate(
+    //   { email: createdByEmail }, // Find by createdByEmail
+    //   //   // { "$push": { hospitals: newHospital._id , } },
+    //   { $push: {  } },
+    //   { new: true } // Push hospital ID to hospitals array
+    // );
     console.log(management);
-    console.log(createdByEmail);
+    console.log(managementEmail);
     if (!management) {
       return res.status(400).json({
         message: "Failed to associate hospital with management profile",
@@ -475,71 +478,29 @@ exports.deleteDoctorFromHospital = async (req, res) => {
     if (!managementPersonnel) {
       return res.status(404).json("Management personnel not found");
     }
-    const hospital = await Hospital.find({ createdByEmail: email });
+    const hospital = await Hospital.findOne({ managementEmail: email });
     console.log(hospital);
-    let doctorFound = false;
-    let tempDoctors = [];
-    hospital.forEach((hospitals) => {
-      console.log("----- Hospital Details -----");
-      console.log(`Name: ${hospitals.name}`);
-      console.log(`Contact Number: ${hospitals.contactNumber}`);
-      console.log(`Doctors Id: ${hospitals.doctorsId}`);
-      tempDoctors = hospitals.doctorsId;
-      // Flag to track if doctor is found
-
-      //   for (let i = 0; i < hospitals.doctorsId.length; i++) {
-      //     if (hospital.doctorsId[i] === Id) {
-      //       hospital.doctorsId.splice(i, 1);
-      //       hospital.doctorsName.splice(i, 1); // Assuming doctorsName has corresponding names (optional)
-      //       doctorFound = true;
-      //       break; // Exit the loop after finding and removing the doctor
-      //     }
-      //   }
-      // ... (display other properties)
-    });
-    console.log(tempDoctors);
-    for (let i = 0; i < tempDoctors.length; i++) {
-      if (tempDoctors[i] === Id) {
-        tempDoctors.splice(i, 1);
-        tempDoctors.splice(i, 1); // Assuming doctorsName has corresponding names (optional)
-        doctorFound = true;
-        break; // Exit the loop after finding and removing the doctor
-      }
-    }
-    console.log(tempDoctors)
+ 
+    
+    
     if (!hospital) {
       return res.status(404).json("Hospital not found");
     }
-
-    // let doctorFound = false; // Flag to track if doctor is found
-
-    // for (let i = 0; i < hospital.doctorsId?.length; i++) {
-    //   if (hospital.doctorsId[i] === Id) {
-    //     hospital.doctorsId.splice(i, 1);
-    //     hospital.doctorsName.splice(i, 1); // Assuming doctorsName has corresponding names (optional)
-    //     doctorFound = true;
-    //     break; // Exit the loop after finding and removing the doctor
-    //   }
-    // }
-
-    // const matchingDoctor = await hospital.doctorsId?.find((id) => id === Id);
-    // if (!matchingDoctor) {
-    //   return res.status(404).json("Doctor not found in the hospital");
-    // }
-    // console.log(hospital.createdByEmail)
-    // Remove the doctor from the doctorsId array
-    // const doctorIndex = await hospital.doctorsId.indexOf(Id);
-    // await hospital.doctorsId.splice(doctorIndex, 1);
-    // await hospital.doctorsName.splice(doctorIndex, 1); // Assuming doctorsName has corresponding names (optional)
-    if (!doctorFound) {
+    const matchingDoctor = await hospital.doctorsId?.find((id) => id === Id);
+    if (!matchingDoctor) {
       return res.status(404).json("Doctor not found in the hospital");
     }
+    console.log(hospital.managementEmail)
+    // Remove the doctor from the doctorsId array
+    const doctorIndex = await hospital.doctorsId.indexOf(Id);
+    await hospital.doctorsId.splice(doctorIndex, 1);
+    await hospital.doctorsName.splice(doctorIndex, 1); // Assuming doctorsName has corresponding names (optional)
     // Save the updated hospital document
     await hospital.save();
-    res.status(204).send("Doctor deleted successfully");
+    return res.status(200).json("Doctor deleted successfully");
   } catch (error) {
     console.error(error); // Log errors for debugging
-    res.status(500).send("Internal server error"); // Customize error message if needed
+    res.status(500).json("Internal server error"); // Customize error message if needed
   }
 };
 
