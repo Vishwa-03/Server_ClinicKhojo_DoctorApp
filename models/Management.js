@@ -45,9 +45,9 @@ const ManagementSchema = new Schema({
     }
   },
   hospitals: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Hospital'
-    // type:String,
+    // type: Schema.Types.ObjectId,
+    // ref: 'Hospital'
+    type:String,
   }],
   hospitalNames: [{ type: String }],
   

@@ -7,7 +7,7 @@ const doctorSchema = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true }, // Hashed using bcrypt
   role: { type: String, required: true, enum: ["user", "doctor", "admin"] },
-
+  uniqueDoctorId:{type:String},
   // Doctor profile details
   profileImage: {
     type: String, // Store image path relative to upload directory

@@ -91,11 +91,9 @@ const HospitalSchema = new Schema({
     type: String,
     require:true,
   },
-  doctors: [
+  doctorsId: [
     {
-      // Array to store associated doctors (references)
-      type: Schema.Types.ObjectId,
-      ref: "Doctor", // Reference the Doctor model
+      type:String,
     },
   ],
   doctorsName: [
