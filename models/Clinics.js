@@ -6,9 +6,9 @@ const clinicSchema = new mongoose.Schema({
   location: { type: String, required: true }, // Address or description
 
   // Additional details (optional)
-  description: { type: String },
+  // description: { type: String },
   contactNumber: { type: String },
-  website: { type: String },
+  fees: { type: String, required: true },
   images: {
     // Array of image paths (relative)
     type: [{ type: String }],
@@ -20,21 +20,46 @@ const clinicSchema = new mongoose.Schema({
   },
 
   // Appointment details
-  appointmentTypes: {
-    // Array of appointment types offered (e.g., Video Call, In-Clinic)
-    type: [{ type: String, enum: ["Video Call", "In-Clinic"] }],
-    required: true,
-  },
+  // appointmentTypes: {
+  //   // Array of appointment types offered (e.g., Video Call, In-Clinic)
+  //   type: [{ type: String, enum: ["Video Call", "In-Clinic"] }],
+  //   required: true,
+  // },
 
+  ownershipProofs: {
+    // Array of image or PDF paths (relative)
+    type: [{ type: String }],
+    required: true,
+    // get: function (paths) {
+    //   // Construct full URLs for proofs
+    //   if (!paths) return [];
+    //   return paths.map((path) => process.env.CLINIC_PROOF_URL + path);
+    // },
+  },
   // Doctor associations (optional)
-  doctors: [
+  doctors: 
     {
       // Array of doctor IDs (references to Doctor model)
       type: mongoose.Schema.Types.ObjectId,
       ref: "Doctor",
+      required: true,
     },
-  ],
-
+  
+  uniqueDoctorId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  doctorEmail: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  clinicUniqueId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   // Ratings and reviews (optional)
   ratings: {
     averageRating: { type: Number, default: 0 }, // Average rating (calculated)
@@ -53,16 +78,17 @@ const clinicSchema = new mongoose.Schema({
   // Timings (choose one approach based on complexity)
 
   // Option 1: Timings as Strings (Simple)
-  timingsSimple: {
-    type: {
-      monday: { type: String }, // Store timings as strings (e.g., "09:00-13:00")
-      tuesday: { type: String },
-      // ... timings for all weekdays
-    },
-    closedOn: { type: String }, // Days of the week clinic is closed (e.g., "SUNDAY")
-  },
+  // timingsSimple: {
+  //   type: {
+  //     monday: { type: String }, // Store timings as strings (e.g., "09:00-13:00")
+  //     tuesday: { type: String },
+  //     // ... timings for all weekdays
+  //   },
+  //   closedOn: { type: String }, // Days of the week clinic is closed (e.g., "SUNDAY")
+  // },
 
   // Option 2: Timings as Time Slots (Flexible)
+
   timingsSlots: {
     type: [
       {
@@ -81,18 +107,18 @@ const clinicSchema = new mongoose.Schema({
         },
         slots: [
           {
-            // Array of time slots
-            startTime: { type: Date, required: true }, // Use Date object with time
-            endTime: { type: Date, required: true }, // Use Date object with time
+            startTime: { type: String, required: true },
+            endTime: { type: String, required: true },
           },
         ],
       },
     ],
+    required: true,
   },
 
   // Choose only one option for timings
   // timingsSimple: {},  // uncomment for Option 1 (timings as strings)
-  timingsSlots: {}, // uncomment for Option 2 (timings as time slots)
+  // timingsSlots: {}, // uncomment for Option 2 (timings as time slots)
 
   // Additional considerations
   // - Consider using a separate schema for clinic timings if managing complex schedules.

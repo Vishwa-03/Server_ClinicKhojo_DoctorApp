@@ -3,7 +3,8 @@ const router = express.Router();
 const Doctor = require("../models/Doctor");
 const Clinic = require("../models/Clinics");
 const bcrypt = require('bcrypt');
-const { registerDoctor, getAllDoctors, getDoctorById, updateDoctorProfile, deleteDoctor, searchDoctors, getDoctorAvailability, bookAppointment, createLeaveRequest, approveRejectLeaveRequest, createClinic, getAllClinics, getClinicById, updateClinicDetails, deleteClinic, associateDoctorWithClinic, disassociateDoctorFromClinic } = require("../controllers/Doctors");
+const { registerDoctor, getAllDoctors, getDoctorById, updateDoctorProfile, deleteDoctor, searchDoctors, getDoctorAvailability, bookAppointment, createLeaveRequest, approveRejectLeaveRequest, detailsOfSlotSection, editEducationalDetails } = require("../controllers/Doctors");
+const { createClinic, getAllClinics, getClinicById, updateClinicDetails, deleteClinic, associateDoctorWithClinic, disassociateDoctorFromClinic } = require("../controllers/Clinics");
 const saltRounds = 10;
 
 // // **Doctor Registration Handler:**
@@ -368,26 +369,27 @@ const saltRounds = 10;
 //   }
 // };
 router.post("/register", registerDoctor);
-router.get("/", getAllDoctors); // Optional
-router.get("/uid", getDoctorById);
-router.put("/:id", updateDoctorProfile); // Protected
-router.delete("/uid", deleteDoctor); // Protected
+router.get("/getAllDoctors", getAllDoctors); // Optional
+router.get("/getDoctorByEmail", getDoctorById);
+router.put("/updateDoctorProfile", updateDoctorProfile); // Protected
+router.delete("/deleteDoctor", deleteDoctor); // Protected
 router.get("/search", searchDoctors);
 router.get("/:doctorId/availability", getDoctorAvailability);
 router.post("/:doctorId/availability", getDoctorAvailability); // Re-added (duplicate removed)
 router.post("/:doctorId/appointments", bookAppointment); // Placeholder
 router.post("/:doctorId/leave-requests", createLeaveRequest);
 router.put("/:doctorId/leave-requests/:leaveId", approveRejectLeaveRequest); // Protected
-router.post("/clinics", createClinic);
-
+router.post("/createClinics", createClinic);
+router.put("/editEducationalDetails",editEducationalDetails);
+router.put("/detailsUnderSlotsSection",detailsOfSlotSection);
 // Get All Clinics (Optional)
-router.get("/clinics", getAllClinics);
+router.get("/getAllClinics", getAllClinics);
 
 // Get Single Clinic by ID
-router.get("/clinics/:id", getClinicById);
+router.get("/clinics/particularClinic", getClinicById);
 
 // Update Clinic Details
-router.put("/clinics/:id", updateClinicDetails);
+router.put("/clinics/updateClinicDetalis", updateClinicDetails);
 
 // Delete Clinic (Protected)
 router.delete("/clinics/:id", deleteClinic);

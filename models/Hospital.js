@@ -77,11 +77,11 @@ const HospitalSchema = new Schema({
   registration: {
     registrationNumber: {
       type: String,
-      required: true,
+     
     },
     yearOfRegistration: {
       type: Date,
-      required: true,
+     
     },
     certificatePath: {
       type: String, // Path to the uploaded registration certificate

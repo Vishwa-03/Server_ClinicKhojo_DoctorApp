@@ -8,6 +8,10 @@ const ManagementSchema = new Schema({
     required: true,
     enum: ['Mr.', 'Ms.', 'Mrs.', 'Dr.']
   },
+  role:{
+    type:String,
+    enum:['management'],
+  },
   fullName: {
     type: String,
     required: true
