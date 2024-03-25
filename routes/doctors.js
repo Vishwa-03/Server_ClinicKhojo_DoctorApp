@@ -371,7 +371,7 @@ const saltRounds = 10;
 router.post("/register", registerDoctor);
 router.get("/getAllDoctors", getAllDoctors); // Optional
 router.get("/getDoctorByEmail", getDoctorById);
-router.put("/updateDoctorProfile", updateDoctorProfile); // Protected
+router.put("/updateDoctorProfile", updateDoctorProfile); // Protected 
 router.delete("/deleteDoctor", deleteDoctor); // Protected
 router.get("/search", searchDoctors);
 router.get("/:doctorId/availability", getDoctorAvailability);
@@ -379,10 +379,10 @@ router.post("/:doctorId/availability", getDoctorAvailability); // Re-added (dupl
 router.post("/:doctorId/appointments", bookAppointment); // Placeholder
 router.post("/:doctorId/leave-requests", createLeaveRequest);
 router.put("/:doctorId/leave-requests/:leaveId", approveRejectLeaveRequest); // Protected
-router.post("/createClinics", createClinic);
 router.put("/editEducationalDetails",editEducationalDetails);
 router.put("/detailsUnderSlotsSection",detailsOfSlotSection);
 // Get All Clinics (Optional)
+router.post("/createClinics", createClinic);
 router.get("/getAllClinics", getAllClinics);
 
 // Get Single Clinic by ID

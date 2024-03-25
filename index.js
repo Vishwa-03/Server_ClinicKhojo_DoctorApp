@@ -14,7 +14,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;// Use environment variable for port or default to 5000
 
 // Connect to MongoDB database (replace with your connection URI)
-database.dbConnect();
+database.dbConnect(); 
 
 // Parse incoming JSON requests
 app.use(express.json());

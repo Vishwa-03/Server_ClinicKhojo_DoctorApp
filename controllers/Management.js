@@ -66,7 +66,7 @@ exports.signup = async (req, res) => {
 
     // 7. Send success response (consider including generated token for login)
     res
-      .status(201)
+      .status(200)
       .json({ message: "Management profile created successfully" });
   } catch (err) {
     console.error(err.stack);
@@ -97,10 +97,13 @@ exports.getManagementProfile = async (req, res) => {
     // const populatedManagement = await management.populate('clinic').execPopulate();
 
     // 4. Send success response
-    res.status(200).json(management);
+    if (management.role!=="management"){
+      return res.status(405).json({message:"Unauthorized access"});
+    }
+    return res.status(200).json(management);
   } catch (err) {
     console.error(err.stack);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 // **Hospital Management Routes (with role-based authorization):**
@@ -195,7 +198,7 @@ exports.createHospitals = async (req, res) => {
     }
     console.log(management);
     // 6. Send success response
-    res.status(201).json({ message: "Hospital created successfully" });
+    res.status(200).json({ message: "Hospital created successfully" });
   } catch (err) {
     console.error(err.stack);
     res
@@ -351,6 +354,28 @@ exports.addDoctors = async (req, res) => {
   } catch (err) {
     console.error(err.stack);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.updateManagementProfile = async (req, res) => {
+  const { managementEmail } = req.query;
+  const updates = req.body;
+
+  try {
+    const updatedManagementStaff = await Management.findOneAndUpdate(
+      { email: managementEmail },
+      updates,
+      {
+        new: true,
+      }
+    );
+    if (!updatedManagementStaff) {
+      return res.status(404).json({ message: "Clinic not found" });
+    }
+    res.json(updatedManagementStaff);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
