@@ -10,7 +10,7 @@ const { signup, getManagementProfile, createHospitals, getAllHospitals, addDocto
 // 1. Register a new management profile
 router.post("/auth/register/management",signup);
 // 2 Get or login management personnel 
-router.get("/management/getProfile/email", getManagementProfile);
+router.get("/management/getProfile/email", getManagementProfile); 
 // **Hospital Management Routes (with role-based authorization):**
 // 1. Create a new hospital profile (requires management role)
 router.post("/createHospitals",createHospitals);
